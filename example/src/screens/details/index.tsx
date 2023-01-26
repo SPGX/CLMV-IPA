@@ -66,15 +66,6 @@ export default function Home() {
 		getDataAccount();
 	}, []);
 
-	// useEffect(() => {
-	// 	const onBackPress = () => {
-	// 		return false;
-	// 	};
-	// 	BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-	// 	return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-	// }, []);
-
 	useEffect(() => {
 		const unsubscribe = navigation.addListener('focus', () => {
 			getDataAccount();
@@ -223,7 +214,6 @@ export default function Home() {
 		if (data) {
 			await replaceBackground(data, backgroundImage, 1000)
 				.then((response: any) => {
-					console.log('if response', response);
 					setTest(response);
 					ProfileImages(response);
 					setLoading(true);
@@ -263,6 +253,60 @@ export default function Home() {
 		setOpenCam(false);
 	};
 
+	const handleSelectCamReConnect = async (v: any, image: any) => {
+		console.log('VVVVV -->', v);
+		console.log('IMAGE -->', image);
+		if (v === 'face') {
+			const data = await api.postUploadImage(image.path, 1, account.people_id);
+			setLoading(true);
+			setTimeout(async () => {
+				setLoading(false);
+			}, 1000);
+			getDataAccount();
+			console.log('data>>>>>', data.data.data);
+			return data;
+		}
+		if (v === 'passport') {
+			const data = await api.postUploadImage(image.path, 2, account.people_id);
+			getDataAccount();
+			console.log('data>>>>>', data.data);
+			return data;
+		}
+		if (v === 'visa') {
+			const data = await api.postUploadImage(image.path, 3, account.people_id);
+			getDataAccount();
+			console.log('data>>>>>', data.data);
+			return data;
+		}
+		if (v === 'visa2') {
+			const data = await api.postUploadImage(image.path, 7, account.people_id);
+			getDataAccount();
+			console.log('data>>>>>', data.data);
+			return data;
+		}
+		if (v === 'request') {
+			const data = await api.postUploadImage(image.path, 4, account.people_id);
+			getDataAccount();
+			console.log('data>>>>>', data.data);
+			return data;
+		}
+		if (v === 'secure') {
+			const data = await api.postUploadImage(image.path, 5, account.people_id);
+			console.log('data JSON >>>', JSON.stringify(data.status));
+			if (data.status === 200) {
+				getDataAccount();
+			} else {
+				handleSelectCamReConnect(v, image);
+			}
+			return data;
+		}
+		if (v === 'health') {
+			const data = await api.postUploadImage(image.path, 6, account.people_id);
+			getDataAccount();
+			return data;
+		}
+	};
+
 	const handleSelectCam = (v: any) => {
 		console.log('V ->', v);
 		ImagePicker.openCamera({
@@ -273,44 +317,66 @@ export default function Home() {
 			console.log('image ===>', image.path);
 			if (v === 'face') {
 				const data = await api.postUploadImage(image?.path, 1, account?.people_id);
+				setLoading(true);
+				setTimeout(async () => {
+					setLoading(false);
+				}, 1000);
 				getDataAccount();
 				console.log('data>>>>>', data.data.data);
 				return data;
 			}
 			if (v === 'passport') {
 				const data = await api.postUploadImage(image?.path, 2, account?.people_id);
-				getDataAccount();
-				console.log('data>>>>>', data.data);
+				if (data?.status === 200) {
+					getDataAccount();
+				} else {
+					handleSelectCamReConnect(v, image);
+				}
 				return data;
 			}
 			if (v === 'visa') {
 				const data = await api.postUploadImage(image?.path, 3, account?.people_id);
-				getDataAccount();
-				console.log('data>>>>>', data.data);
+				if (data?.status === 200) {
+					getDataAccount();
+				} else {
+					handleSelectCamReConnect(v, image);
+				}
 				return data;
 			}
 			if (v === 'visa2') {
 				const data = await api.postUploadImage(image?.path, 7, account?.people_id);
-				getDataAccount();
-				console.log('data>>>>>', data.data);
+				if (data?.status === 200) {
+					getDataAccount();
+				} else {
+					handleSelectCamReConnect(v, image);
+				}
 				return data;
 			}
 			if (v === 'request') {
 				const data = await api.postUploadImage(image?.path, 4, account?.people_id);
-				getDataAccount();
-				console.log('data>>>>>', data.data);
+				if (data?.status === 200) {
+					getDataAccount();
+				} else {
+					handleSelectCamReConnect(v, image);
+				}
 				return data;
 			}
 			if (v === 'secure') {
 				const data = await api.postUploadImage(image?.path, 5, account?.people_id);
-				getDataAccount();
-				console.log('data>>>>>', data.data);
+				if (data?.status === 200) {
+					getDataAccount();
+				} else {
+					handleSelectCamReConnect(v, image);
+				}
 				return data;
 			}
 			if (v === 'health') {
 				const data = await api.postUploadImage(image?.path, 6, account?.people_id);
-				getDataAccount();
-				console.log('data>>>>>', data.data);
+				if (data?.status === 200) {
+					getDataAccount();
+				} else {
+					handleSelectCamReConnect(v, image);
+				}
 				return data;
 			}
 		});
@@ -823,7 +889,7 @@ export default function Home() {
 					<View
 						style={{
 							position: 'absolute',
-							top: 0,
+							top: 20,
 							left: 0,
 							backgroundColor: '#000',
 							width: '100%',

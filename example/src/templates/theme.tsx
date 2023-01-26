@@ -419,7 +419,8 @@ export const styles = StyleSheet.create({
 		width: 'auto',
 		height: 30,
 		left: 10,
-		marginTop: 30,
+		// marginTop: 40,
+		top: '30%',
 		flexDirection: 'row',
 	},
 	bBorderTop: {
